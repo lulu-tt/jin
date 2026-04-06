@@ -34,9 +34,13 @@ export default function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const checkApiKey = () => {
-    // 1. Vite 환경 변수
-    const viteKey = import.meta.env?.VITE_GEMINI_API_KEY;
-    if (viteKey && viteKey !== "MY_GEMINI_API_KEY" && viteKey !== "") return;
+    // 1. Vite define을 통한 직접 치환 (VITE_GEMINI_API_KEY)
+    try {
+      if (typeof VITE_GEMINI_API_KEY !== 'undefined' && 
+          VITE_GEMINI_API_KEY && 
+          VITE_GEMINI_API_KEY !== "MY_GEMINI_API_KEY" && 
+          VITE_GEMINI_API_KEY !== "") return;
+    } catch (e) {}
 
     // 2. process.env
     try {

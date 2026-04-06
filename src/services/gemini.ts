@@ -8,17 +8,19 @@ export interface ChatMessage {
 
 // API 키 가져오기 (환경 변수 또는 로컬 스토리지)
 const getApiKey = () => {
-  // 1. Vite 환경 변수 (빌드 시 치환됨)
-  const viteKey = import.meta.env?.VITE_GEMINI_API_KEY;
-  if (viteKey && viteKey !== "MY_GEMINI_API_KEY" && viteKey !== "") return viteKey as string;
+  // 1. Vite define을 통한 직접 치환 (VITE_GEMINI_API_KEY)
+  try {
+    const viteKey = VITE_GEMINI_API_KEY; // vite.config.ts에서 define됨
+    if (viteKey && viteKey !== "MY_GEMINI_API_KEY" && viteKey !== "") return viteKey;
+  } catch (e) {}
 
   // 2. process.env (Node 환경 또는 Vite define)
   try {
-    const processKey = process.env.GEMINI_API_KEY;
-    if (processKey && processKey !== "MY_GEMINI_API_KEY" && processKey !== "") return processKey as string;
-  } catch (e) {
-    // process 객체가 정의되지 않은 환경 (브라우저 배포판)
-  }
+    if (typeof process !== 'undefined' && process.env.GEMINI_API_KEY) {
+      const pKey = process.env.GEMINI_API_KEY;
+      if (pKey && pKey !== "MY_GEMINI_API_KEY" && pKey !== "") return pKey;
+    }
+  } catch (e) {}
 
   // 3. 로컬 스토리지 (사용자 직접 입력)
   return localStorage.getItem('GEMINI_API_KEY') || "";
