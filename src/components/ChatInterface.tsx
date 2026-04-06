@@ -15,15 +15,20 @@ import ReactMarkdown from 'react-markdown';
 import { sendMessage, ChatMessage } from '../services/gemini';
 import { cn } from '../lib/utils';
 
-// 최신 3D 디플리 캐릭터 이미지 (제공해주신 디자인 반영)
-const DIPLY_AVATAR = "https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=200&h=200&auto=format&fit=crop"; // 디플리 느낌의 3D 캐릭터 예시
-const DIPLY_FULL = "https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=500&h=500&auto=format&fit=crop"; // 대형 디플리 예시
+import characterFlying from '../assets/character_flying.png';
+import characterEdu from '../assets/character_edu.png';
+import characterFamily from '../assets/character_family.png';
+import characterTech from '../assets/character_tech.png';
+
+// 외교부 공식 캐릭터 '디플리(Diply)' 자산 적용
+const DIPLY_AVATAR = characterTech; 
+const DIPLY_FULL = characterFlying;
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "model",
-      text: "안녕하세요! 저는 여러분의 외교부 친구 **디플리**예요! 🌍✨\n\n여권 발급부터 해외 여행 안전 정보까지, 궁금한 건 무엇이든 물어보세요. 제가 반갑게 도와드릴게요!"
+      text: "안녕하세요! 저는 대한민국 외교부의 든든한 AI 비서, **디플리**예요! 🌍✨\n\n무엇을 도와드릴까요? 여권 발급부터 해외 안전 정보까지 무엇이든 물어보세요!"
     }
   ]);
   const [input, setInput] = useState("");
@@ -72,7 +77,17 @@ export default function ChatInterface() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-[#F0F9FF] via-[#E0F2FE] to-[#DBEAFE] relative overflow-hidden">
+    <div 
+      className="flex flex-col h-full bg-gradient-to-b from-[#F0F9FF] via-[#E0F2FE] to-[#DBEAFE] relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${characterEdu})`,
+        backgroundSize: '400px',
+        backgroundPosition: 'right bottom',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        backgroundBlendMode: 'soft-light'
+      }}
+    >
       {/* Background Decoration */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400 rounded-full blur-[120px]" />
@@ -85,10 +100,9 @@ export default function ChatInterface() {
           <div className="relative">
             <div className="w-10 h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-blue-50">
               <img 
-                src="https://picsum.photos/seed/diply-face/200/200" 
+                src={DIPLY_AVATAR} 
                 alt="Diply"
                 className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
               />
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
@@ -102,7 +116,7 @@ export default function ChatInterface() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <a href="/admin" className="text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all px-3 py-1.5 bg-white rounded-full shadow-sm border border-blue-100">
+          <a href="#/admin" className="text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all px-3 py-1.5 bg-white rounded-full shadow-sm border border-blue-100">
             관리자 모드
           </a>
           <button onClick={() => setMessages([messages[0]])} className="p-2 hover:bg-white rounded-full transition-colors text-slate-400 hover:text-blue-600">
@@ -127,10 +141,9 @@ export default function ChatInterface() {
                 className="w-56 h-56 relative z-10"
               >
                 <img 
-                  src="https://picsum.photos/seed/diply-full/500/500" 
+                  src={DIPLY_FULL} 
                   alt="Diply Welcome"
                   className="w-full h-full object-contain drop-shadow-2xl"
-                  referrerPolicy="no-referrer"
                 />
               </motion.div>
               <div className="absolute inset-0 bg-blue-400/20 blur-3xl rounded-full scale-75 -z-10" />
@@ -161,10 +174,9 @@ export default function ChatInterface() {
                   <User className="w-5 h-5" />
                 ) : (
                   <img 
-                    src="https://picsum.photos/seed/diply-face/200/200" 
+                    src={DIPLY_AVATAR} 
                     alt="Diply"
                     className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
                   />
                 )}
               </div>
@@ -208,10 +220,9 @@ export default function ChatInterface() {
           <div className="flex gap-3 mr-auto max-w-[80%]">
             <div className="w-10 h-10 rounded-full bg-white border-2 border-white flex items-center justify-center shrink-0 shadow-md overflow-hidden">
               <img 
-                src="https://picsum.photos/seed/diply-face/200/200" 
+                src={DIPLY_AVATAR} 
                 alt="Diply"
                 className="w-full h-full object-cover animate-pulse"
-                referrerPolicy="no-referrer"
               />
             </div>
             <div className="bg-white/80 backdrop-blur-sm border border-white p-5 rounded-[24px] rounded-tl-none shadow-sm flex items-center gap-3">

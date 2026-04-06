@@ -3,19 +3,19 @@ import ChatInterface from './components/ChatInterface';
 import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
-  const [path, setPath] = useState(window.location.pathname);
+  const [view, setView] = useState(window.location.hash === '#/admin' ? 'admin' : 'chat');
 
   useEffect(() => {
-    const handleLocationChange = () => {
-      setPath(window.location.pathname);
+    const handleHashChange = () => {
+      setView(window.location.hash === '#/admin' ? 'admin' : 'chat');
     };
 
-    window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Simple routing logic
-  if (path === '/admin') {
+  // Simple routing logic based on Hash
+  if (view === 'admin') {
     return <AdminDashboard />;
   }
 
