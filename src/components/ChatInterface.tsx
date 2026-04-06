@@ -93,11 +93,23 @@ export default function ChatInterface({ isDarkMode, toggleDarkMode }: ChatInterf
         text: response.text,
         groundingMetadata: response.groundingMetadata
       }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      let errorMessage = "앗, 잠시 통신에 문제가 생겼나 봐요. 다시 한번 말씀해 주시겠어요? 제가 금방 알아볼게요! 💙";
+      
+      if (error.message === "API_KEY_MISSING") {
+        errorMessage = "⚠️ **API 키 설정이 필요합니다.**\n\n프로젝트 루트에 `.env` 파일을 생성하고 `GEMINI_API_KEY`를 입력해 주세요. (예: `GEMINI_API_KEY=AIza...`)";
+      } else if (error.message === "API_KEY_INVALID") {
+        errorMessage = "❌ **유효하지 않은 API 키입니다.**\n\n입력하신 API 키가 정확한지, 혹은 할당량이 만료되지 않았는지 확인해 주세요.";
+      } else if (error.message === "API_QUOTA_EXCEEDED") {
+        errorMessage = "⏳ **API 할당량이 초과되었습니다.**\n\n현재 계정의 Google AI Studio 무료 할당량이 소진되었거나 설정되지 않았습니다. 할당량(Quota) 설정을 확인해 주세요.";
+      } else if (error.message === "MODEL_NOT_FOUND") {
+        errorMessage = "🔍 **모델을 찾을 수 없습니다.**\n\n사용 중인 API 키가 선택한 모델(`gemini-2.5-flash`)을 지원하지 않거나 설정이 잘못되었습니다.";
+      }
+
       setMessages(prev => [...prev, { 
         role: "model", 
-        text: "앗, 잠시 통신에 문제가 생겼나 봐요. 다시 한번 말씀해 주시겠어요? 제가 금방 알아볼게요! 💙" 
+        text: errorMessage 
       }]);
     } finally {
       setIsLoading(false);
