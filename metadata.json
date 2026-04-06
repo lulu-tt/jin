@@ -1,0 +1,7 @@
+{
+  "name": "외교부 AI 비서 (MOFA Chatbot)",
+  "description": "외교부 홈페이지 정보를 기반으로 여권, 영사 서비스 및 국가별 안전 정보를 제공하는 RAG 기반 AI 챗봇입니다.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
