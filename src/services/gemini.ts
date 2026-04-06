@@ -1,17 +1,22 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
-const apiKey = process.env.GEMINI_API_KEY;
-
 export interface ChatMessage {
   role: "user" | "model";
   text: string;
   groundingMetadata?: any;
 }
 
+// Get API key from environment or localStorage (for static site fallback)
+const getApiKey = () => {
+  return process.env.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
+};
+
 export async function sendMessage(
   message: string,
   history: ChatMessage[] = []
 ): Promise<{ text: string; groundingMetadata?: any }> {
+  const apiKey = getApiKey();
+  
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is not configured.");
   }

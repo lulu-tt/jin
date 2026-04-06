@@ -8,7 +8,8 @@ import {
   Globe, 
   ChevronRight,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  Key
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
@@ -28,7 +29,28 @@ export default function ChatInterface() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [tempKey, setTempKey] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const checkApiKey = () => {
+    const key = process.env.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
+    if (!key) {
+      setShowKeyModal(true);
+    }
+  };
+
+  useEffect(() => {
+    checkApiKey();
+  }, []);
+
+  const saveApiKey = () => {
+    if (tempKey.trim()) {
+      localStorage.setItem('GEMINI_API_KEY', tempKey.trim());
+      setShowKeyModal(false);
+      setTempKey("");
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -102,6 +124,13 @@ export default function ChatInterface() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowKeyModal(true)} 
+            className="p-2 hover:bg-white rounded-full transition-colors text-slate-400 hover:text-blue-600"
+            title="API 키 설정"
+          >
+            <Key className="w-5 h-5" />
+          </button>
           <a href="#/admin" className="text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all px-3 py-1.5 bg-white rounded-full shadow-sm border border-blue-100">
             관리자 모드
           </a>
@@ -110,6 +139,72 @@ export default function ChatInterface() {
           </button>
         </div>
       </header>
+
+      {/* API Key Modal */}
+      <AnimatePresence>
+        {showKeyModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowKeyModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-[32px] p-8 w-full max-w-md relative z-10 shadow-2xl border border-blue-100"
+            >
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                  <Key className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black text-slate-800">Gemini API 키 설정</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    챗봇 기능을 사용하려면 Gemini API 키가 필요합니다.<br/>
+                    입력하신 키는 브라우저에만 안전하게 저장됩니다.
+                  </p>
+                </div>
+                <div className="w-full space-y-4 pt-4">
+                  <input 
+                    type="password"
+                    value={tempKey}
+                    onChange={(e) => setTempKey(e.target.value)}
+                    placeholder="API 키를 입력하세요"
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-sm focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                  />
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => setShowKeyModal(false)}
+                      className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl text-sm font-bold hover:bg-slate-200 transition-all"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      onClick={saveApiKey}
+                      disabled={!tempKey.trim()}
+                      className="flex-1 py-4 bg-blue-600 text-white rounded-2xl text-sm font-bold hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 transition-all shadow-lg shadow-blue-200"
+                    >
+                      저장하기
+                    </button>
+                  </div>
+                  <a 
+                    href="https://aistudio.google.com/app/apikey" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block text-[11px] text-blue-500 font-bold hover:underline"
+                  >
+                    API 키가 없으신가요? 여기서 무료로 발급받기
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-8 relative z-10">
