@@ -18,11 +18,13 @@ export async function sendMessage(
 
   const ai = new GoogleGenAI({ apiKey });
   
-  // Convert history to Gemini format
-  const contents = history.map((msg) => ({
-    role: msg.role,
-    parts: [{ text: msg.text }],
-  }));
+  // Convert history to Gemini format, ensuring the first message is from the user
+  const contents = history
+    .filter((msg, index) => !(index === 0 && msg.role === "model")) // Skip initial greeting if it's the first message
+    .map((msg) => ({
+      role: msg.role,
+      parts: [{ text: msg.text }],
+    }));
 
   // Add current message
   contents.push({
