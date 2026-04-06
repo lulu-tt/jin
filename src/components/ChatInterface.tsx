@@ -34,8 +34,21 @@ export default function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const checkApiKey = () => {
-    const key = process.env.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
-    if (!key) {
+    // 1. Vite 환경 변수
+    const viteKey = import.meta.env?.VITE_GEMINI_API_KEY;
+    if (viteKey && viteKey !== "MY_GEMINI_API_KEY" && viteKey !== "") return;
+
+    // 2. process.env
+    try {
+      if (typeof process !== 'undefined' && process.env.GEMINI_API_KEY && 
+          process.env.GEMINI_API_KEY !== "MY_GEMINI_API_KEY" && 
+          process.env.GEMINI_API_KEY !== "") return;
+    } catch (e) {}
+
+    // 3. 로컬 스토리지
+    const storedKey = localStorage.getItem('GEMINI_API_KEY');
+    
+    if (!storedKey || storedKey === "") {
       setShowKeyModal(true);
     }
   };
